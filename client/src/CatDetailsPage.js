@@ -96,13 +96,13 @@ export default function CatDetailsPage() {
                         ❌
                     </button>
 
-                    <p><strong>🗓️ Visit Date:</strong> {new Date(record.visit_date).toLocaleDateString()}</p>
-                    <p><strong>🏥 Hospital:</strong> {record.hospital_name}</p>
-                    <p><strong>👩‍⚕️ Veterinarian:</strong> {record.vet_name}</p>
-                    <p><strong>📋 Reason:</strong> {record.visit_reason}</p>
-                    <p><strong>💬 Symptoms:</strong> {record.symptom_description}</p>
-                    <p><strong>⏳ Duration:</strong> {record.symptom_duration}</p>
-                    <p><strong>📝 Doctor's Advice:</strong> {record.doctor_notes}</p>
+                    <p><strong>Visit Date:</strong> {new Date(record.visit_date).toLocaleDateString()}</p>
+                    <p><strong>Hospital:</strong> {record.hospital_name}</p>
+                    <p><strong>Veterinarian:</strong> {record.vet_name}</p>
+                    <p><strong>Reason:</strong> {record.visit_reason}</p>
+                    <p><strong>Symptoms:</strong> {record.symptom_description}</p>
+                    <p><strong>Duration:</strong> {record.symptom_duration}</p>
+                    <p><strong>Doctor's Advice:</strong> {record.doctor_notes}</p>
                     </div>
                 ))}
         </div>
