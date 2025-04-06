@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Link } from 'react-router-dom';
 
 export default function CatListPage() {
     const [cats, setCats] = useState([]);
     const [error, setError] = useState('');
-
-    const Navigate = useNavigate(); 
+    const navigate = useNavigate(); 
 
     // load datas 
     useEffect(() => {
@@ -26,7 +24,7 @@ export default function CatListPage() {
     return (
         <div>
             <h2>Cat List</h2>
-            <button onClick={() => Navigate('/add-cat')}>Add a cat</button><br />
+            <button onClick={() => navigate('/add-cat')}>Add a cat</button><br />
 
             {error && <p>{error}</p>}
             {cats.length === 0 ? (
@@ -35,10 +33,17 @@ export default function CatListPage() {
                 <ul>
                     {cats.map(cat => (
                         <li key={cat.id}>
-                        <Link to={`/cats/${cat.id}`}>
-                          <strong>{cat.name}</strong>
-                        </Link> — Age: {cat.age}
-                      </li>
+                            <p><strong>Name:</strong> {cat.name}</p>
+                            <p><strong>Age:</strong> {cat.age ?? 'N/A'}</p>
+                            <p><strong>Weight:</strong> {cat.weight ?? 'N/A'} lb</p>
+                            <p><strong>Birthday:</strong> {cat.birthday ? new Date(cat.birthday).toLocaleDateString() : 'N/A'}</p>
+                            <p><strong>Arrival:</strong> {cat.arrival_date ? new Date(cat.arrival_date).toLocaleDateString() : 'N/A'}</p>
+                            <p><strong>Usual Food:</strong> {cat.usual_food ?? 'N/A'}</p>
+                            <p><strong>Dewormed:</strong> {cat.dewormed ? 'Yes' : 'No'}</p>
+
+                            <button onClick={() => navigate(`/cats/${cat.id}`)}>View Details</button>
+                            <button onClick={() => navigate(`/cats/${cat.id}/edit`)} style={{ marginLeft: '10px' }}>Edit</button>
+                        </li>
                     ))}
                 </ul>
             )}

@@ -9,8 +9,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 model User {
@@ -22,15 +28,18 @@ model User {
 }
 
 model Cat {
-  id            Int         @id @default(autoincrement())
-  user          User        @relation(fields: [userId], references: [id])
-  userId        Int
-  name          String
-  age           Int
-  breed         String?
-  birthdate     DateTime?
-  weight        Float?
-  records       HealthRecord[]
+  id                    Int    @id @default(autoincrement())
+  avatar                String?
+  name                  String
+  age                   Int?
+  weight                Float?
+  birthday              DateTime?
+  arrival_date          DateTime?
+  usual_food            String?
+  is_dewormed              Boolean?
+  user                  User   @relation(fields: [userId], references: [id])
+  userId                Int
+  healthRecords         HealthRecord[]
 }
 
 model HealthRecord {

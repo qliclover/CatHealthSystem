@@ -78,7 +78,7 @@ export default function AddRecordForCatPage() {
                 <label>
                     Symptom Description:
                     <textarea 
-                        name="symtom_description"
+                        name="symptom_description"
                         value={form.symptom_description}
                         onChange={handleChange}/>
                 </label><br />
@@ -97,7 +97,9 @@ export default function AddRecordForCatPage() {
                         name="doctor_notes"
                         value={form.doctor_notes}
                         onChange={handleChange}/>
-                </label>
+                </label><br />
+                
+                <button type="submit">Submit Record</button>
             </form>
             <p>{message}</p>
         </div>

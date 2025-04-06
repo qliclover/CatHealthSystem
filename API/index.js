@@ -43,7 +43,7 @@ const requireAuth = (req, res, next) => {
     }
 };
 
-// register
+// --------register--------
 app.post('/api/register', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -74,7 +74,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// Login funtion
+// --------Login funtion--------
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
   
@@ -107,7 +107,7 @@ app.post('/api/login', async (req, res) => {
     }
   });
 
-//   Add cats
+//   --------Add cats--------
 app.post('/api/cats', requireAuth, async (req, res) => {
     const { name, age } = req.body;
     const userId = req.user.id;
@@ -127,7 +127,7 @@ app.post('/api/cats', requireAuth, async (req, res) => {
     }
   });
 
-//   Add health record
+//   --------Add health record--------
 app.post('/api/health_records', requireAuth, async (req, res) => {
   const {
     catId,
@@ -137,7 +137,7 @@ app.post('/api/health_records', requireAuth, async (req, res) => {
     visit_reason,
     symptom_description,
     symptom_duration,
-    symptom_trigger
+    doctor_notes
   } = req.body;
 
   try {
@@ -161,7 +161,74 @@ app.post('/api/health_records', requireAuth, async (req, res) => {
   }
 });
 
-// Delecte records
+// --------Update records--------
+app.put('/api/health_records/:id', requireAuth, async (req, res) => {
+  const recordId = parseInt(req.params.id);
+  const {
+    visit_date,
+    hospital_name,
+    vet_name,
+    visit_reason,
+    symptom_description,
+    symptom_duration,
+    doctor_notes
+  } = req.body;
+
+  try {
+    const updated = await prisma.healthRecord.update({
+      where: { id: recordId },
+      data: {
+        visit_date: new Date(visit_date),
+        hospital_name,
+        vet_name,
+        visit_reason,
+        symptom_description,
+        symptom_duration,
+        doctor_notes
+      }
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error('Failed to update record:', err);
+    res.status(500).json({ error: 'Failed to update records'})
+  }
+})
+
+// --------Update Cat--------
+app.put('/api/cats/:id', requireAuth, async (req, res) => {
+  const catId = parseInt(req.params.id);
+  const { 
+    name, 
+    age,
+    weight,
+    birthday,
+    arrival_date,
+    usual_food,
+    is_dewormed
+  } = req.body;
+
+  try {
+    const updated = await prisma.cat.update({
+      where: { id: catId },
+      data: {
+        name,
+        age: parseInt(age),
+        weight: parseFloat(weight),
+        birthday: birthday ? new Date(birthday) : null,
+        arrival_date: arrival_date ? new Date(arrival_date) : null,
+        usual_food,
+        is_dewormed
+      }
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error('Failed to update cat:', err);
+    res.status(500).json({ error: 'Failed to update cat' });
+  }
+});
+
+// --------Delecte records--------
 app.delete('/api/health_records/:id', requireAuth, async (req, res) => {
   const recordId = parseInt(req.params.id);
 
@@ -177,9 +244,26 @@ app.delete('/api/health_records/:id', requireAuth, async (req, res) => {
   }
 });
 
+// --------Delecte Cat--------
+// Delete health records first then cat
+app.delete('/api/cats/:id', requireAuth, async (req, res) => {
+  const catId = parseInt(req.params.id);
+
+  try {
+    await prisma.healthRecord.deleteMany({
+      where: { catId }
+    });
+
+    res.json({ message:'Cat deleted' });
+  } catch (err) {
+    console.error('Failed to delete cat:', err);
+    res.status(500).json({ error: 'Failed to delete cat' });
+  }
+});
 
 
-//   Get all health record 
+
+//   --------Get all health record-------- 
 app.get('/api/cats/:id/records', requireAuth, async (req, res) => {
     const catId = parseInt(req.params.id);
 
@@ -194,13 +278,13 @@ app.get('/api/cats/:id/records', requireAuth, async (req, res) => {
     }
 });
 
-// GET single cats info
+// --------GET single cats info--------
 app.get('/api/cats/:id', requireAuth, async (req, res) => {
     const catId = parseInt(req.params.id);
 
     try {
         const cat = await prisma.cat.findUnique({
-            where: { id: catId }
+            where: { id: catId },
         });
 
         if (!cat) {
@@ -213,7 +297,29 @@ app.get('/api/cats/:id', requireAuth, async (req, res) => {
     }
 });
 
+// --------GET single health record--------
+app.get('/api/health_records/:id', requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  try {
+    const record = await prisma.healthRecord.findUnique({
+      where: { id }
+    });
+
+    if (!record) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+
+    res.json(record);
+  } catch (err) {
+    console.error('Failed to get record:', err);
+    res.status(500).json({ error: 'Failed to fetch record' });
+  }
+});
+
 // start server
-app.listen(8000, () => {
-    console.log('🚀 Server running at http://localhost:8000');
-})
+const PORT = parseInt(process.env.PORT) || 8000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

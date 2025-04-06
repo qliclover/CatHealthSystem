@@ -9,6 +9,8 @@ import CatListPage from './CatListPage';
 import AddCatPage from './AddCatPage';
 import CatDetailsPage from './CatDetailsPage';
 import AddRecordForCatPage from './AddRecordForCatPage';
+import EditRecordPage from './EditRecordPage';
+import EditCatPage from './EditCatPage';
 
 
 function App() {
@@ -24,6 +26,8 @@ function App() {
           <Route path='/add-cat' element={<AddCatPage />} />
           <Route path='/cats/:id' element={<CatDetailsPage />} />
           <Route path='/cats/:id/add-record' element={<AddRecordForCatPage />} />
+          <Route path='/records/:recordId/edit' element={<EditRecordPage />} />
+          <Route path='/cats/:id/edit' element={<EditCatPage />} />
         </Routes>
       </div>
     </BrowserRouter>
