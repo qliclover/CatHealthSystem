@@ -19,7 +19,7 @@ function App() {
     <BrowserRouter>
       <div className='App'>
         <Routes>
-          <Route path='/' element={<RegisterPage />} />
+          <Route path='/' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/login' element={<LoginPage />} /> 
           <Route path='/cats' element={<CatListPage />} />

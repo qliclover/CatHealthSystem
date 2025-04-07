@@ -1,0 +1,9 @@
+{
+    "rewrites": [
+      {
+        "source": "/api/(.*)",
+        "destination": "https://cathealthsystem-ffj4expfs-qian-lis-projects-4f6c7f3b.vercel.app/"
+      }
+    ]
+  }
+  

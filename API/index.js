@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -12,8 +13,11 @@ const prisma = new PrismaClient();
 
 // localhost
 app.use(cors({
-    origin: 'http://localhost:8000',
-    credentials: true
+  origin: [
+    'http://localhost:8000',
+    'https://cathealthsystem.vercel.app'
+],
+credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -35,7 +39,8 @@ const requireAuth = (req, res, next) => {
     if(!token) return res.status(401).json({ error: 'Not logged in' });
 
     try {
-        const user = require('jsonwebtoken').verify(token, 'my_secret');
+      const user = jwt.verify(token, process.env.JWT_SECRET);
+
         req.user = user;
         next();
     } catch (err) {
@@ -92,7 +97,7 @@ app.post('/api/login', async (req, res) => {
         return res.status(401).json({ error: 'Incorrect password' });
       }
   
-      const token = jwt.sign({ id: user.id, username: user.username }, 'my_secret', {
+      const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
         expiresIn: '7d'
       });
   

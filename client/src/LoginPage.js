@@ -21,7 +21,7 @@ export default function LoginPage() {
         e.preventDefault();
 
         // request login 
-        const res = await fetch('/api/login', {
+        const res = await fetch('https://cathealthsystem.onrender.com/api/login', {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
