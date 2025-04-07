@@ -13,11 +13,19 @@ const prisma = new PrismaClient();
 
 // localhost
 app.use(cors({
-  origin: [
-    'http://localhost:8000',
-    'https://cathealthsystem.vercel.app'
-],
-credentials: true
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:8000',
+      'https://cathealthsystem.vercel.app',
+      'https://cathealthsystem-ffj4expfs-qian-lis-projects-4f6c7f3b.vercel.app', // 改成你自己真实的 Vercel URL
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
