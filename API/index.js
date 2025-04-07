@@ -17,7 +17,7 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost:8000',
       'https://cathealthsystem.vercel.app',
-      'https://cathealthsystem-ffj4expfs-qian-lis-projects-4f6c7f3b.vercel.app', // 改成你自己真实的 Vercel URL
+      'https://cathealthsystem-m69bj081t-qian-lis-projects-4f6c7f3b.vercel.app',
     ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
