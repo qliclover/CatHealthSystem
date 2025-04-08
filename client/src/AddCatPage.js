@@ -34,18 +34,19 @@ export default function AddCatPage() {
             body: JSON.stringify(form)
         });
 
-        let data = null;
+        let data;
         try {
-            data = await res.json();
-        } catch (error) {
-            console.error("Failed to parse", error);
+        data = await res.json();
+        } catch (err) {
+        setMessage('Server error: cannot parse response');
+        return;
         }
 
         if (res.ok) {
-            setMessage('Cat added!');
-            setTimeout(() => navigate('/cats'), 1000);
+        setMessage('Cat created!');
+        setTimeout(() => navigate('/cats'), 1000);
         } else {
-            setMessage(data.error || 'Failed to add cat.');
+        setMessage(data?.error || 'Failed to create cat');
         }
     };
 
