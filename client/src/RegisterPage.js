@@ -22,7 +22,7 @@ export default function RegisterPage() {
         e.preventDefault();
 
         // POST form
-        const res = await fetch('/api/register', {
+        const res = await fetch('https://cathealthsystem.onrender.com/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form),

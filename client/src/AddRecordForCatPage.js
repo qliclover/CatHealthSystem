@@ -25,7 +25,7 @@ export default function AddRecordForCatPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch('/api/health_records', {
+        const res = await fetch('https://cathealthsystem.onrender.com/api/health_records', {
             method: 'POST',
             credentials: 'include',
             headers: {

@@ -14,7 +14,7 @@ export default function AddHealthRecordPage() {
 
     // Load all cats info
     useEffect(() => {
-        fetch('/api/cats', {
+        fetch('https://cathealthsystem.onrender.com/api/cats', {
             credentials: 'include'
         })
         .then(res => res.json())

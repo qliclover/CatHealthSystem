@@ -25,7 +25,7 @@ export default function AddCatPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch('/api/cats', {
+        const res = await fetch('https://cathealthsystem.onrender.com/api/cats', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -34,7 +34,12 @@ export default function AddCatPage() {
             body: JSON.stringify(form)
         });
 
-        const data = await res.json();
+        let data = null;
+        try {
+            data = await res.json();
+        } catch (error) {
+            console.error("Failed to parse", error);
+        }
 
         if (res.ok) {
             setMessage('Cat added!');

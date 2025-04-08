@@ -15,7 +15,7 @@ export default function CatDetailsPage() {
         if (!confirmed) return;
 
         try {
-            const res = await fetch(`/api/health_records/${recordId}`, {
+            const res = await fetch(`https://cathealthsystem.onrender.com/api/health_records/${recordId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
