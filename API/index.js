@@ -13,7 +13,10 @@ const prisma = new PrismaClient();
 
 // localhost
 app.use(cors({
-  origin: true,
+  origin: [
+    'http://localhost:3000', 
+    'https://cathealthsystem.vercel.app'
+  ],
   credentials: true
 }));
 
@@ -101,7 +104,8 @@ app.post('/api/login', async (req, res) => {
   
       res.cookie('token', token, {
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'none',
+        secure: true
       });
   
       res.json({ message: 'Login successful' });
