@@ -19,7 +19,7 @@ export default function EditCatPage() {
 
     // Read the record data
     useEffect(() => {
-        fetch(`https://cathealthsystem.onrender.com/api/cats/${id}`, {
+        fetch(`/api/cats/${id}`, {
             credentials: 'include'
         })
         .then(res => res.json())

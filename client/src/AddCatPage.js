@@ -24,8 +24,10 @@ export default function AddCatPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const res = await fetch('https://cathealthsystem.onrender.com/api/cats', {
+    
+        console.log('Submitting form data:', form);
+    
+        const res = await fetch('/api/cats', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -33,20 +35,22 @@ export default function AddCatPage() {
             },
             body: JSON.stringify(form)
         });
-
+    
         let data;
         try {
-        data = await res.json();
+            data = await res.json();
+            console.log('API response:', data);
         } catch (err) {
-        setMessage('Server error: cannot parse response');
-        return;
+            console.error('Error parsing response:', err);
+            setMessage('Server error: cannot parse response');
+            return;
         }
-
+    
         if (res.ok) {
-        setMessage('Cat created!');
-        setTimeout(() => navigate('/cats'), 1000);
+            setMessage('Cat created!');
+            setTimeout(() => navigate('/cats'), 1000);
         } else {
-        setMessage(data?.error || 'Failed to create cat');
+            setMessage(data?.error || 'Failed to create cat');
         }
     };
 
@@ -79,7 +83,7 @@ export default function AddCatPage() {
                 </label><br />
 
                 <label>dewormed:
-                    <input name="dewormed" type="checkbox" checked={form.is_dewormed} onChange={handleChange} />
+                    <input name="is_dewormed" type="checkbox" checked={form.is_dewormed} onChange={handleChange} />
                 </label><br />
 
                 <button type="submit">Add Cat</button>

@@ -1,6 +1,0 @@
--- AlterTable
-ALTER TABLE "Cat" ADD COLUMN "arrival_date" DATETIME;
-ALTER TABLE "Cat" ADD COLUMN "birthdate" DATETIME;
-ALTER TABLE "Cat" ADD COLUMN "dewormed" BOOLEAN;
-ALTER TABLE "Cat" ADD COLUMN "food_preference" TEXT;
-ALTER TABLE "Cat" ADD COLUMN "weight" REAL;

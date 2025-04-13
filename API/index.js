@@ -13,11 +13,10 @@ const prisma = new PrismaClient();
 
 // localhost
 app.use(cors({
-  origin: [
-    'http://localhost:3000', 
-    'https://cathealthsystem.vercel.app'
-  ],
-  credentials: true
+  origin: ["https://cathealthsystem.vercel.app", "http://localhost:3000"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
 }));
 
 app.use(express.json());
@@ -29,9 +28,18 @@ app.get('/api/ping', (req, res) => {
 });
 
 // GET get all cats' info
-app.get('/api/cats', async (req, res) => {
-    const cats = await prisma.cat.findMany();
-    res.json(cats);
+app.get('/api/cats', requireAuth, async (req, res) => {
+    try {
+        const cats = await prisma.cat.findMany({
+            where: {
+                userId: req.user.id
+            }
+        });
+        res.json(cats);
+    } catch (error) {
+        console.error('Failed to fetch cats:', error);
+        res.status(500).json({ error: 'Failed to fetch cats' });
+    }
 });
 
 // Log in function
@@ -80,6 +88,32 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// Create test account if it doesn't exist
+const createTestAccount = async () => {
+    try {
+        const testUser = await prisma.user.findFirst({
+            where: { username: 'clover' }
+        });
+
+        if (!testUser) {
+            const hashedPassword = await bcrypt.hash('123456', 10);
+            await prisma.user.create({
+                data: {
+                    username: 'clover',
+                    email: 'test@example.com',
+                    password: hashedPassword
+                }
+            });
+            console.log('Test account created');
+        }
+    } catch (error) {
+        console.error('Failed to create test account:', error);
+    }
+};
+
+// Call the function when server starts
+createTestAccount();
+
 // --------Login funtion--------
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
@@ -116,23 +150,37 @@ app.post('/api/login', async (req, res) => {
 
 //   --------Add cats--------
 app.post('/api/cats', requireAuth, async (req, res) => {
-    const { name, age } = req.body;
-    const userId = req.user.id;
-  
-    try {
-      const newCat = await prisma.cat.create({
-        data: {
-          name,
-          age: parseInt(age),
-          userId
-        }
-      });
-  
-      res.json(newCat);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to create cat' });
-    }
-  });
+  const { 
+    name, 
+    age, 
+    weight, 
+    birthday, 
+    arrival_date, 
+    usual_food, 
+    is_dewormed 
+  } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const newCat = await prisma.cat.create({
+      data: {
+        name,
+        age: age ? parseInt(age) : null,
+        weight: weight ? parseFloat(weight) : null,
+        birthday: birthday ? new Date(birthday) : null,
+        arrival_date: arrival_date ? new Date(arrival_date) : null,
+        usual_food,
+        is_dewormed: is_dewormed || false,
+        userId
+      }
+    });
+
+    res.json(newCat);
+  } catch (err) {
+      console.error('Failed to create cat:', err);
+      res.status(500).json({ error: 'Failed to create cat' });
+  }
+});
 
 //   --------Add health record--------
 app.post('/api/health_records', requireAuth, async (req, res) => {
@@ -260,8 +308,12 @@ app.delete('/api/cats/:id', requireAuth, async (req, res) => {
     await prisma.healthRecord.deleteMany({
       where: { catId }
     });
+    
+    await prisma.cat.delete({
+      where: { id: catId }
+    });
 
-    res.json({ message:'Cat deleted' });
+    res.json({ message: 'Cat deleted' });
   } catch (err) {
     console.error('Failed to delete cat:', err);
     res.status(500).json({ error: 'Failed to delete cat' });
@@ -322,6 +374,11 @@ app.get('/api/health_records/:id', requireAuth, async (req, res) => {
     console.error('Failed to get record:', err);
     res.status(500).json({ error: 'Failed to fetch record' });
   }
+});
+
+// Check authentication status
+app.get('/api/check-auth', requireAuth, (req, res) => {
+    res.json({ authenticated: true });
 });
 
 // start server

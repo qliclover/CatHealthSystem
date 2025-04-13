@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 export default function CatDetailsPage() {
     const { id } = useParams();
     const [records, setRecords] = useState([]);
-    const [error, setError] = useState('');
     const [cat, setCats] = useState(null);
     const navigate = useNavigate();
 
@@ -15,7 +14,7 @@ export default function CatDetailsPage() {
         if (!confirmed) return;
 
         try {
-            const res = await fetch(`https://cathealthsystem.onrender.com/api/health_records/${recordId}`, {
+            const res = await fetch(`/api/health_records/${recordId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -42,7 +41,7 @@ export default function CatDetailsPage() {
             });
 
             if (res.ok) {
-                alert('Cat deleted');
+                alert('Cat deleted successfully');
                 navigate('/cats');
             } else {
                 alert('Failed to delete cat');
@@ -61,7 +60,7 @@ export default function CatDetailsPage() {
         .then(res => res.json())
         .then(data => setRecords(data))
         .catch(err => {
-            setError('Failed to load records');
+            console.error('Failed to load records:', err);
         });
     }, [id]);
 
@@ -109,10 +108,10 @@ export default function CatDetailsPage() {
               <p><strong>Name:</strong> {cat.name}</p>
               <p><strong>Age:</strong> {cat.age}</p>
               <p><strong>Weight:</strong> {cat.weight ?? 'N/A'} lb</p>
-              <p><strong>Birthday:</strong> {cat.birthdate ? new Date(cat.birthdate).toLocaleDateString() : 'N/A'}</p>
+              <p><strong>Birthday:</strong> {cat.birthday ? new Date(cat.birthday).toLocaleDateString() : 'N/A'}</p>
               <p><strong>Arrival Date:</strong> {cat.arrival_date ? new Date(cat.arrival_date).toLocaleDateString() : 'N/A'}</p>
               <p><strong>Usual Food:</strong> {cat.usual_food ?? 'N/A'}</p>
-              <p><strong>Dewormed:</strong> {cat.dewormed ? 'Yes' : 'No'}</p>
+              <p><strong>Dewormed:</strong> {cat.is_dewormed ? 'Yes' : 'No'}</p>
               <button onClick={() => navigate(`/cats/${id}/edit`)}>Edit Cat Info</button>
             </div>
           )}
