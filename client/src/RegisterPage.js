@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API_BASE_URL from './config';
 
 export default function RegisterPage() {
     // create a form for username, email and password
@@ -22,7 +23,7 @@ export default function RegisterPage() {
         e.preventDefault();
 
         // POST form
-        const res = await fetch('https://cathealthsystem.onrender.com/api/register', {
+        const res = await fetch(`${API_BASE_URL}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form),

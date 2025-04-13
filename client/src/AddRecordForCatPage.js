@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import API_BASE_URL from './config';
 
 export default function AddRecordForCatPage() {
     const { id } = useParams();
@@ -25,7 +26,7 @@ export default function AddRecordForCatPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch('https://cathealthsystem.onrender.com/api/health_records', {
+        const res = await fetch(`${API_BASE_URL}/api/health_records`, {
             method: 'POST',
             credentials: 'include',
             headers: {

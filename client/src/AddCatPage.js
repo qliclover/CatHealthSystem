@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import API_BASE_URL from './config';
 
 export default function AddCatPage() {
     const [message, setMessage] = useState('');
@@ -25,7 +26,7 @@ export default function AddCatPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch('https://cathealthsystem.onrender.com/api/cats', {
+        const res = await fetch(`${API_BASE_URL}/api/cats`, {
             method: 'POST',
             credentials: 'include',
             headers: {

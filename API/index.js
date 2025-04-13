@@ -14,10 +14,14 @@ const prisma = new PrismaClient();
 // localhost
 app.use(cors({
   origin: [
-    'http://localhost:3000', 
+    'http://localhost:3000',
     'https://cathealthsystem.vercel.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Set-Cookie'],
+  maxAge: 86400
 }));
 
 app.use(express.json());
@@ -36,12 +40,21 @@ app.get('/api/cats', async (req, res) => {
 
 // Log in function
 const requireAuth = (req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      return next();
+    }
     const token = req.cookies.token;
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
     if(!token) return res.status(401).json({ error: 'Not logged in' });
 
     try {
       const user = jwt.verify(token, process.env.JWT_SECRET);
-
         req.user = user;
         next();
     } catch (err) {
@@ -82,37 +95,37 @@ app.post('/api/register', async (req, res) => {
 
 // --------Login funtion--------
 app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
   
-    try {
-      const user = await prisma.user.findUnique({
-        where: { username }
-      });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username }
+    });
   
-      if (!user) {
-        return res.status(401).json({ error: 'User not found' });
-      }
-  
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        return res.status(401).json({ error: 'Incorrect password' });
-      }
-  
-      const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
-        expiresIn: '7d'
-      });
-  
-      res.cookie('token', token, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true
-      });
-  
-      res.json({ message: 'Login successful' });
-    } catch (err) {
-      res.status(500).json({ error: 'Server error' });
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
     }
-  });
+  
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+  
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+  
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+  
+    res.json({ message: 'Login successful' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 //   --------Add cats--------
 app.post('/api/cats', requireAuth, async (req, res) => {
@@ -259,6 +272,10 @@ app.delete('/api/cats/:id', requireAuth, async (req, res) => {
   try {
     await prisma.healthRecord.deleteMany({
       where: { catId }
+    });
+
+    await prisma.cat.delete({
+      where: { id: catId }
     });
 
     res.json({ message:'Cat deleted' });

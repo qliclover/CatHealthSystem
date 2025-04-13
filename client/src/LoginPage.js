@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import API_BASE_URL from './config';
 
 // Login page parts
 export default function LoginPage() {
@@ -21,7 +22,7 @@ export default function LoginPage() {
         e.preventDefault();
 
         // request login 
-        const res = await fetch('https://cathealthsystem.onrender.com/api/login', {
+        const res = await fetch(`${API_BASE_URL}/api/login`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },

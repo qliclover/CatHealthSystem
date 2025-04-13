@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import API_BASE_URL from './config';
 
 export default function CatListPage() {
     const [cats, setCats] = useState([]);
@@ -8,7 +9,7 @@ export default function CatListPage() {
 
     // load datas 
     useEffect(() => {
-        fetch('https://cathealthsystem.onrender.com/api/cats', {
+        fetch(`${API_BASE_URL}/api/cats`, {
             credentials: 'include'
         })
             .then(res => res.json())
